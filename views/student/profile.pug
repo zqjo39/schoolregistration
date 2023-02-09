@@ -8,23 +8,31 @@ block content
         h3 Name: #{student.first_name} #{student.last_name}
         p Grade Level: #{student.grade_level}
     h4 Student Courses
-    form(action = `/students/${student.id}/enroll/` method = 'post')
-        select(name = 'course' id = 'course' autocomplete = off)
-            each course in availableCourses
-                option(value = course.id) #{course.name}
-        button.button(type = 'submit') Enroll
-    table
-        thead
-            tr
-                th Course Title
-                th Instructor
-                th Department
-                th
-        tbody
-            each course in student.courses
+    if availableCourses.length > 0
+        form(action = `/students/${student.id}/enroll/` method = 'post')
+            select(name = 'course' id = 'course' autocomplete = off)
+                each course in availableCourses
+                    option(value = course.id) #{course.name}
+            button.button.primary(type = 'submit') Enroll
+    else
+        p No remaining courses are available to enroll in.
+    h4 Enrolled Courses
+    if student.courses.length > 0
+        table
+            thead
                 tr
-                    td= course.name
-                    td= course.instructor_name
-                    td= course.department
-                    td
-                        a(href=`/courses/profile/${course.id}`) View Course
+                    th Course Title
+                    th Instructor
+                    th Department
+                    th
+            tbody
+                each course in student.courses
+                    tr
+                        td= course.name
+                        td= course.instructor_name
+                        td= course.department
+                        td
+                            a(href=`/courses/profile/${course.id}`) View Course
+                            a(href = `/students/${student.id}/removeCourse/${course.id}`) Remove Course
+    else
+        p #{student.first_name} has not enrolled in any courses.
